@@ -1,7 +1,7 @@
 const app = Vue.createApp({
     data() {
         return {
-            searchRestaurant: '',  
+            searchRestaurant: 'C93IDB',  
             showOrders: 0,
             listOrders: {
                 awaiting: [],
@@ -19,7 +19,6 @@ const app = Vue.createApp({
     },
 
     methods: {
-
         async getData() {
             let response = await fetch(`http://localhost:3000/api/v1/restaurants/${this.selectedRestaurant}/orders`);
             
@@ -47,15 +46,38 @@ const app = Vue.createApp({
                     this.listOrders.ready.push(order);
                 }
             });
-
-            console.log('Pedidos classificados:', this.listOrders);
-            console.log(this.showOrders);
         },
 
         async showDetails(order) {            
             let response = await fetch(`http://localhost:3000/api/v1/restaurants/${this.selectedRestaurant}/orders/${order.code}`);
             let orderDetails = await response.json();
             this.selectedOrder = orderDetails;
+        },
+
+        async markOnPreparation(order) {
+            let resquestOptions = {
+                method: 'Post',
+                headers: { 'Content-Type': 'application/json'},
+                body: JSON.stringify(order)
+            }  
+            let response = await fetch(`http://localhost:3000/api/v1/restaurants/${this.selectedRestaurant}/orders/${order.code}/in_preparation`, resquestOptions)
+            let orderDetails = await response.json();
+            this.selectedOrder = orderDetails;
+
+            this.getData()
+        },
+
+        async markReady(order) {
+            let resquestOptions = {
+                method: 'Post',
+                headers: { 'Content-Type': 'application/json'},
+                body: JSON.stringify(order)
+            }  
+            let response = await fetch(`http://localhost:3000/api/v1/restaurants/${this.selectedRestaurant}/orders/${order.code}/ready`, resquestOptions)
+            let orderDetails = await response.json();
+            this.selectedOrder = orderDetails;
+
+            this.getData()
         },
     }
 });

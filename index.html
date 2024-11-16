@@ -17,6 +17,7 @@
                     Código: {{ item.code }}<br>
                     Status: {{ item.status }}
                 </li>
+                
             </ul>
     
             <h2>Em Preparação</h2>
@@ -64,6 +65,9 @@
                         </li>
                     </ul>
                 </div>
+
+                <button v-if="selectedOrder.status === 'Aguardando confirmação da cozinha'" v-on:click="markOnPreparation(selectedOrder)">Aceitar</button>
+                <button v-if="selectedOrder.status === 'Em preparação'" v-on:click="markReady(selectedOrder)">Marcar como pronto</button>
             </div>
         </div> 
     </div>
