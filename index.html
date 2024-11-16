@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cozinha Pá Levar</title>
+</head>
+<body>
+    <div id="app">
+        <h1>Cozinha Pá Levar</h1>
+        <input class="input" type="text" v-model="searchRestaurant" placeholder="Código do Restaurante">
+        <button v-on:click="getData">Buscar Pedidos</button>
+        <div v-if="showOrders > 0">
+            <h2>Aguardando Confirmação</h2>
+            <ul>
+                <li v-for="(item, index) in listOrders.awaiting" v-on:click="showDetails(item)">
+                    Código: {{ item.code }}<br>
+                    Status: {{ item.status }}
+                </li>
+            </ul>
+    
+            <h2>Em Preparação</h2>
+            <ul>
+                <li v-for="(item, index) in listOrders.in_preparation" v-on:click="showDetails(item)">
+                    Código: {{ item.code }}<br>
+                    Status: {{ item.status }}
+                </li>
+            </ul>
+    
+            <h2>Pronto</h2>
+            <ul>
+                <li v-for="(item, index) in listOrders.ready" v-on:click="showDetails(item)">
+                    Código: {{ item.code }}<br>
+                    Status: {{ item.status }}
+                </li>
+            </ul>
+    
+            <div v-if="selectedOrder">
+                <h3>Detalhes do Pedido:</h3>
+                <p><strong>Nome:</strong> {{ selectedOrder.name }}</p>
+                <p><strong>CPF:</strong> {{ selectedOrder.cpf }}</p>
+                <p><strong>Emitido:</strong> {{ selectedOrder.created_at }}</p>
+                <p><strong>Status:</strong> {{ selectedOrder.status }}</p>
+                <p><strong>Código:</strong> {{ selectedOrder.code }}</p>
+                <div>
+                    <h4>Pratos</h4>
+                    <ul>
+                        <li v-for="(item, index) in selectedOrder.items.dishes">
+                            Prato: {{ item.name }}<br>
+                            Porção: {{ item.portion }}<br>
+                            Preço: {{ item.price }}<br>
+                            Quantidade: {{ item.quantity }}<br>
+                        </li>
+                    </ul>
+                </div>
+                <div>
+                    <h4>Bebidas</h4>
+                    <ul>
+                        <li v-for="(item, index) in selectedOrder.items.beverages">
+                            Bebida: {{ item.name }}<br>
+                            Porção: {{ item.portion }}<br>
+                            Preço: {{ item.price }}<br>
+                            Quantidade: {{ item.quantity }}<br>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div> 
+    </div>
+
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+    <script src="main.js"></script>
+</body>
+</html>
