@@ -3,39 +3,21 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css">
     <title>Cozinha Pá Levar</title>
 </head>
 <body>
     <div id="app">
+        <nav>
         <h1>Cozinha Pá Levar</h1>
         <input class="input" type="text" v-model="searchRestaurant" placeholder="Código do Restaurante">
-        <button v-on:click="getData">Buscar Pedidos</button>
-        <div v-if="showOrders > 0">
-            <h2>Aguardando Confirmação</h2>
-            <ul>
-                <li v-for="(item, index) in listOrders.awaiting" v-on:click="showDetails(item)">
-                    Código: {{ item.code }}<br>
-                    Status: {{ item.status }}
-                </li>
-                
-            </ul>
-    
-            <h2>Em Preparação</h2>
-            <ul>
-                <li v-for="(item, index) in listOrders.in_preparation" v-on:click="showDetails(item)">
-                    Código: {{ item.code }}<br>
-                    Status: {{ item.status }}
-                </li>
-            </ul>
-    
-            <h2>Pronto</h2>
-            <ul>
-                <li v-for="(item, index) in listOrders.ready" v-on:click="showDetails(item)">
-                    Código: {{ item.code }}<br>
-                    Status: {{ item.status }}
-                </li>
-            </ul>
-    
+        <button class="button" v-on:click="getData">Buscar Pedidos</button>
+        </nav>
+
+        <div class="msg" v-if="listOrders.awaiting.length <= 0 || listOrders.in_preparation.length <= 0 || listOrders.ready.length <= 0">
+            Restaurante não encontrado
+        </div>
+        <div>
             <div v-if="selectedOrder">
                 <h3>Detalhes do Pedido:</h3>
                 <p><strong>Nome:</strong> {{ selectedOrder.name }}</p>
@@ -47,10 +29,14 @@
                     <h4>Pratos</h4>
                     <ul>
                         <li v-for="(item, index) in selectedOrder.items.dishes">
-                            Prato: {{ item.name }}<br>
-                            Porção: {{ item.portion }}<br>
-                            Preço: {{ item.price }}<br>
-                            Quantidade: {{ item.quantity }}<br>
+                            <div class="card">
+                                <address>
+                                    Prato: {{ item.name }}<br>
+                                    Porção: {{ item.portion }}<br>
+                                    Preço: {{ item.price }}<br>
+                                    Quantidade: {{ item.quantity }}<br>                   
+                                </address>
+                            </div>
                         </li>
                     </ul>
                 </div>
@@ -58,17 +44,61 @@
                     <h4>Bebidas</h4>
                     <ul>
                         <li v-for="(item, index) in selectedOrder.items.beverages">
-                            Bebida: {{ item.name }}<br>
-                            Porção: {{ item.portion }}<br>
-                            Preço: {{ item.price }}<br>
-                            Quantidade: {{ item.quantity }}<br>
+                            <div class="card">
+                                <address>
+                                    Bebida: {{ item.name }}<br>
+                                    Porção: {{ item.portion }}<br>
+                                    Preço: {{ item.price }}<br>
+                                    Quantidade: {{ item.quantity }}<br>                
+                                </address>
+                            </div>
                         </li>
                     </ul>
                 </div>
 
-                <button v-if="selectedOrder.status === 'Aguardando confirmação da cozinha'" v-on:click="markOnPreparation(selectedOrder)">Aceitar</button>
-                <button v-if="selectedOrder.status === 'Em preparação'" v-on:click="markReady(selectedOrder)">Marcar como pronto</button>
+                <button class="button" v-if="selectedOrder.status === 'Aguardando confirmação da cozinha'" v-on:click="markOnPreparation(selectedOrder)">Aceitar</button>
+                <button class="button" v-if="selectedOrder.status === 'Em preparação'" v-on:click="markReady(selectedOrder)">Marcar como pronto</button>
             </div>
+            <div class="order-table-container" v-if="listOrders.awaiting.length > 0 || listOrders.in_preparation.length > 0 || listOrders.ready.length > 0">
+                <table class="order-table">
+                    <tbody>
+                      <tr>
+                        <th class="section-header" colspan="2" scope="col">Aguardando Confirmação da cozinha</th>
+                      </tr>
+                      <tr>
+                        <th class="column-header" scope="col">Código</th>
+                        <th class="column-header" scope="col">Status</th>
+                      </tr>
+                      <tr v-for="(item, index) in listOrders.awaiting" v-on:click="showDetails(item)">   
+                        <td><code class="order-code">{{ item.code }}</code></td>
+                        <td>{{ item.status }}</td>
+                      </tr>
+                      <tr>
+                        <th class="section-header" colspan="2" scope="col">Em Preparação</th>
+                      </tr>
+                      <tr>
+                        <th class="column-header" scope="col">Código</th>
+                        <th class="column-header" scope="col">Status</th>
+                      </tr>
+                      <tr v-for="(item, index) in listOrders.in_preparation" v-on:click="showDetails(item)">   
+                        <td><code class="order-code">{{ item.code }}</code></td>
+                        <td>{{ item.status }}</td>
+                      </tr>
+                      <tr>
+                        <th class="section-header" colspan="2" scope="col">Pronto</th>
+                      </tr>
+                      <tr>
+                        <th class="column-header" scope="col">Código</th>
+                        <th class="column-header" scope="col">Status</th>
+                      </tr>
+                      <tr v-for="(item, index) in listOrders.ready" v-on:click="showDetails(item)">   
+                        <td><code class="order-code">{{ item.code }}</code></td>
+                        <td>{{ item.status }}</td>
+                      </tr>
+                    </tbody>
+                  </table>                  
+            </div>                 
+
         </div> 
     </div>
 

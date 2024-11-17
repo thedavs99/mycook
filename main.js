@@ -1,8 +1,8 @@
 const app = Vue.createApp({
     data() {
         return {
-            searchRestaurant: 'C93IDB',  
-            showOrders: 0,
+            searchRestaurant: '',  
+  
             listOrders: {
                 awaiting: [],
                 in_preparation: [],
@@ -22,9 +22,7 @@ const app = Vue.createApp({
         async getData() {
             let response = await fetch(`http://localhost:3000/api/v1/restaurants/${this.selectedRestaurant}/orders`);
             
-            if (response.status === 200){
-                this.showOrders = 1
-            }
+
 
             let data = await response.json();
             this.listOrders.awaiting = [];
