@@ -6,15 +6,21 @@ const app = Vue.createApp({
             listOrders: {
                 awaiting: [],
                 in_preparation: [],
-                ready: []
+                ready: [],
+                canceled: []
             },
-            selectedOrder: ''  
+            selectedOrder: '',
+            canceled_explain: ''
         };
     },
 
     computed: {
         selectedRestaurant() {
             return this.searchRestaurant ? this.searchRestaurant : null;
+        },
+
+        canceledDecription() {
+            return this.canceled_explain ? this.canceled_explain : null;
         }
     },
 
@@ -42,6 +48,8 @@ const app = Vue.createApp({
                     this.listOrders.in_preparation.push(order);
                 } else if (order.status === "Pronto") {
                     this.listOrders.ready.push(order);
+                } else if (order.status === "Cancelado") {
+                    this.listOrders.canceled.push(order);
                 }
             });
         },
@@ -72,6 +80,24 @@ const app = Vue.createApp({
                 body: JSON.stringify(order)
             }  
             let response = await fetch(`http://localhost:3000/api/v1/restaurants/${this.selectedRestaurant}/orders/${order.code}/ready`, resquestOptions)
+            let orderDetails = await response.json();
+            this.selectedOrder = orderDetails;
+
+            this.getData()
+        },
+
+        async markCanceled(order) {
+            let resquestOptions = {
+                method: 'Post',
+                headers: { 'Content-Type': 'application/json'},
+                body: JSON.stringify({
+                    order: order,
+                    description: this.canceledDecription
+                    }
+                ),
+                
+            }  
+            let response = await fetch(`http://localhost:3000/api/v1/restaurants/${this.selectedRestaurant}/orders/${order.code}/canceled/`, resquestOptions)
             let orderDetails = await response.json();
             this.selectedOrder = orderDetails;
 

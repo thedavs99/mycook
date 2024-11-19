@@ -14,7 +14,7 @@
         <button class="button" v-on:click="getData">Buscar Pedidos</button>
         </nav>
 
-        <div class="msg" v-if="listOrders.awaiting.length <= 0 || listOrders.in_preparation.length <= 0 || listOrders.ready.length <= 0">
+        <div class="msg" v-if="listOrders.awaiting.length <= 0 && listOrders.in_preparation.length <= 0 && listOrders.ready.length <= 0 && listOrders.canceled.length <= 0">
             Restaurante não encontrado
         </div>
         <div>
@@ -25,6 +25,7 @@
                 <p><strong>Emitido:</strong> {{ selectedOrder.created_at }}</p>
                 <p><strong>Status:</strong> {{ selectedOrder.status }}</p>
                 <p><strong>Código:</strong> {{ selectedOrder.code }}</p>
+                <p v-if="selectedOrder.status === 'Cancelado'"><strong>Motivo de cancelamento:</strong> {{ selectedOrder.description }}</p>
                 <div>
                     <h4>Pratos</h4>
                     <ul>
@@ -58,6 +59,9 @@
 
                 <button class="button" v-if="selectedOrder.status === 'Aguardando confirmação da cozinha'" v-on:click="markOnPreparation(selectedOrder)">Aceitar</button>
                 <button class="button" v-if="selectedOrder.status === 'Em preparação'" v-on:click="markReady(selectedOrder)">Marcar como pronto</button>
+
+                <input class="input"  v-if="selectedOrder.status === 'Aguardando confirmação da cozinha'" type="text" v-model="canceled_explain" placeholder="Motivo de cancelamento">
+                <button  v-if="selectedOrder.status === 'Aguardando confirmação da cozinha'" class="button" v-on:click="markCanceled(selectedOrder)">Cancelar</button>
             </div>
             <div class="order-table-container" v-if="listOrders.awaiting.length > 0 || listOrders.in_preparation.length > 0 || listOrders.ready.length > 0">
                 <table class="order-table">
@@ -92,6 +96,17 @@
                         <th class="column-header" scope="col">Status</th>
                       </tr>
                       <tr v-for="(item, index) in listOrders.ready" v-on:click="showDetails(item)">   
+                        <td><code class="order-code">{{ item.code }}</code></td>
+                        <td>{{ item.status }}</td>
+                      </tr>
+                      <tr>
+                        <th class="section-header" colspan="2" scope="col">Cancelados</th>
+                      </tr>
+                      <tr>
+                        <th class="column-header" scope="col">Código</th>
+                        <th class="column-header" scope="col">Status</th>
+                      </tr>
+                      <tr v-for="(item, index) in listOrders.canceled" v-on:click="showDetails(item)">   
                         <td><code class="order-code">{{ item.code }}</code></td>
                         <td>{{ item.status }}</td>
                       </tr>
